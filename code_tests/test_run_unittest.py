@@ -17,13 +17,13 @@ from evaluate_xray import get_logits, load_model
 current_dir = os.getcwd()
 
 # path, to the "test_files" directory
-test_files_dir = "".join([current_dir, "/test_files"])
+test_files_dir = os.path.join(current_dir, "test_files")
 
 # path, to the parent directory of "test_run_unittest" module
 parent_dir = os.path.dirname(current_dir)
 
 # path, to the pytorch neural network model file
-pytorch_model_path = "".join([parent_dir, "/src/ResultModelscriptmodule_CPU.pt"])
+pytorch_model_path = os.path.join(parent_dir, "src/ResultModelscriptmodule_CPU.pt")
 
 # test file, image name (3x500x500 white image)
 test_image_name = "whiteRGB500x500.jpeg"
@@ -41,14 +41,14 @@ class TestImageTransfrom(unittest.TestCase):
     def test_pytorch_image_transform_tensor_output(self):
         """ Tests whether pytorch image transforms are applied correctly."""
         # open the image
-        img_path = "".join([test_files_dir, '/', test_image_name])
+        img_path = os.path.join(test_files_dir, test_image_name)
         img = Image.open(img_path)
 
         # apply transform
         transformed_img = apply_transforms(img)
 
         # load precalculated output tensor
-        tensor_path = "".join([test_files_dir, '/', test_transformed_image_tensor_name])
+        tensor_path = os.path.join(test_files_dir, test_transformed_image_tensor_name)
         comparison_tensor = torch.load(tensor_path)
 
         # make comparison
@@ -63,7 +63,7 @@ class TestImageTransfrom(unittest.TestCase):
          pytorch neural network model)
         """
         comparison_tensor = torch.zeros(1, 3, 224, 224).shape
-        img_path = "".join([test_files_dir, '/', test_image_name])
+        img_path = os.path.join(test_files_dir, test_image_name)
         transformed_img = make_input_for_nn_model(img_path).shape
 
         # make comparison
@@ -79,7 +79,7 @@ class TestImageTransfrom(unittest.TestCase):
         # image path, image is not important, any valid path is acceptable
         # "mock" will change the return value of apply_transforms to a
         # a test string
-        image_path = "".join([test_files_dir, '/', test_image_name])
+        image_path = os.path.join(test_files_dir, test_image_name)
 
         with self.assertRaises(NotATorchSensor):
             make_input_for_nn_model(image_path)
@@ -94,7 +94,7 @@ class TestImageTransfrom(unittest.TestCase):
         # image path, image is not important, any valid path is acceptable
         # "mock" will change the return value of apply_transforms to a
         # torch zeros tensor with a shape of (3, 500, 224)
-        image_path = "".join([test_files_dir, '/', test_image_name])
+        image_path = os.path.join(test_files_dir, test_image_name)
 
         with self.assertRaises(WrongModelInputSize):
             make_input_for_nn_model(image_path)
@@ -122,7 +122,7 @@ class TestEvaluateXray(unittest.TestCase):
         output = get_logits(torch.ones(1, 3, 224, 224), covid_prediction_model)
 
         # compare the test result with expected output
-        test_output_path = "".join([test_files_dir, '/', test_logits_name])
+        test_output_path = os.path.join(test_files_dir, test_logits_name)
         test_output = torch.load(test_output_path)
         comparison_result = (torch.allclose(output, test_output) == torch.tensor(True))
         self.assertTrue(comparison_result, "Values do not match.")

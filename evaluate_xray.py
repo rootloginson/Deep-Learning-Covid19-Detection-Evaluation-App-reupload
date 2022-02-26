@@ -93,7 +93,7 @@ def main(args) -> None:
     working_dir = os.getcwd()
 
     # path, of the pytorch neural network model
-    pytorch_model_path = "".join([working_dir, "/src/ResultModelscriptmodule_CPU.pt"])
+    pytorch_model_path = os.path.join(working_dir, "src/ResultModelscriptmodule_CPU.pt")
 
     # notifies the user. Loading a model may take time.
     print(f"\nEvaluating file -> {args.img}\n")
